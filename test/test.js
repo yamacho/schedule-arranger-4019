@@ -72,15 +72,21 @@ describe('/schedules', () => {
             .expect(/テスト候補3/)
             .expect(200)
             .end(() => {
+              if (err) return done(err);
               // テストで作成したデータを削除
               const scheduleId = createdSchedulePath.split('/schedules/')[1];
               Candidate.findAll({
                 where: { scheduleId: scheduleId }
               }).then((candidates) => {
-                candidates.forEach((c) => { c.destroy(); });
-                Schedule.findById(scheduleId).then((s) => { s.destroy(); });
+                const promises = candidates.map((c) => { return c.destroy(); });
+                Promise.all(promises).then(() => {
+                  Schedule.findById(scheduleId).then((s) => { 
+                    s.destroy().then(() => { 
+                      done(); 
+                    });
+                  });
+                });
               });
-              done();
             });
         });
     });
