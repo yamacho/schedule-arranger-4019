@@ -80,7 +80,7 @@ describe('/schedules', () => {
               }).then((candidates) => {
                 const promises = candidates.map((c) => { return c.destroy(); });
                 Promise.all(promises).then(() => {
-                  Schedule.findById(scheduleId).then((s) => { 
+                  Schedule.findByPk(scheduleId).then((s) => { 
                     s.destroy().then(() => { 
                       done(); 
                     });
